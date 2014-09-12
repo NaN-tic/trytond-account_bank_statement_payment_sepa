@@ -5,7 +5,6 @@ from sql import operators, Literal
 from sql.aggregate import Count, Sum
 from sql.conditionals import Case
 from decimal import Decimal
-from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
@@ -50,7 +49,6 @@ class StatementLine:
                 group_by=(payment.sepa_mandate, mandate.type),
                 where=(payment.kind == 'receivable')
                 )
-            a = tuple(subquery)
 
             query = payment.join(subquery,
                 condition=payment.sepa_mandate == subquery.sepa_mandate)
@@ -61,7 +59,6 @@ class StatementLine:
                 where=(payment.kind == 'receivable') & (payment.group != None)
                     & (payment.journal.in_(journals))
                 )
-            b = tuple(query)
 
         else:
             query = payment.select(payment.group, payment.date,
