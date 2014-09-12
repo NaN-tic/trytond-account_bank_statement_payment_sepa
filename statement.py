@@ -57,7 +57,8 @@ class StatementLine:
                 group_by=(payment.group, payment.date, subquery.sequence_type),
                 having=operators.Equal(Sum(payment.amount), search_amount),
                 where=(payment.kind == 'receivable') & (payment.group != None)
-                    & (payment.journal.in_(journals))
+                    & (payment.journal.in_(journals)),
+                order_by=payment.date.desc,
                 )
 
         else:
@@ -65,7 +66,8 @@ class StatementLine:
                 group_by=(payment.group, payment.date),
                 having=operators.Equal(Sum(payment.amount), search_amount),
                 where=(payment.kind == 'payable') & (payment.group != None)
-                    & (payment.journal.in_(journals))
+                    & (payment.journal.in_(journals)),
+                order_by=payment.date.desc,
                 )
 
         cursor = Transaction().cursor
