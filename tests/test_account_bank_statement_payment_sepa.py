@@ -1,31 +1,21 @@
 #!/usr/bin/env python
 # This file is part of account_bank_statement_payment_sepa module for Tryton.
-# The COPYRIGHT file at the top level of this repository contains
-# the full copyright notices and license terms.
-from trytond.tests.test_tryton import test_view, test_depends
-import os
-import sys
-import trytond.tests.test_tryton
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 import unittest
-DIR = os.path.abspath(os.path.normpath(os.path.join(__file__,
-    '..', '..', '..', '..', '..', 'trytond')))
-if os.path.isdir(DIR):
-    sys.path.insert(0, os.path.dirname(DIR))
+import trytond.tests.test_tryton
+from trytond.tests.test_tryton import test_depends
 
 
 class AccountBankStatementPaymentSEPATestCase(unittest.TestCase):
-    '''
-    Test Account Bank Statement Payment SEPA module.
-    '''
+    'Test Account Bank Statement Payment SEPA module'
 
     def setUp(self):
         trytond.tests.test_tryton.install_module(
             'account_bank_statement_payment_sepa')
 
     def test0006depends(self):
-        '''
-        Test depends.
-        '''
+        'Test depends'
         test_depends()
 
 
