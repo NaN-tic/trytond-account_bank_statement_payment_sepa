@@ -1,9 +1,8 @@
 # This file is part of account_bank_statement_payment_sepa module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from sql import operators, Literal
-from sql.aggregate import Count, Sum
-from sql.conditionals import Case
+from sql import operators
+from sql.aggregate import Sum
 from decimal import Decimal
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -43,18 +42,17 @@ class StatementLine:
             payment_mandate = payment.join(mandate,
                 condition=payment.sepa_mandate == mandate.id)
             subquery = payment_mandate.select(payment.sepa_mandate,
-                Case((mandate.type == 'one-off', 'OOFF'),
-                    (Count(Literal(1)) == 1, 'FRST'),
-                    else_='RCUR').as_('sequence_type'),
-                group_by=(payment.sepa_mandate, mandate.type),
+                mandate.type, mandate.scheme,
+                group_by=(payment.sepa_mandate, mandate.type, mandate.scheme),
                 where=(payment.kind == 'receivable')
                 )
 
             query = payment.join(subquery,
                 condition=payment.sepa_mandate == subquery.sepa_mandate)
             query = query.select(payment.group, payment.date,
-                subquery.sequence_type,
-                group_by=(payment.group, payment.date, subquery.sequence_type),
+                subquery.type, subquery.scheme,
+                group_by=(payment.group, payment.date, subquery.type,
+                    subquery.scheme),
                 having=operators.Equal(Sum(payment.amount), search_amount),
                 where=(payment.kind == 'receivable') & (payment.group != None)
                     & (payment.journal.in_(journals)),
@@ -77,8 +75,8 @@ class StatementLine:
         for domain, r in zip(domains, res):
             payments = Payment.search(domain)
             if kind == 'receivable':
-                payments = [p for p in payments if
-                    p.sepa_mandate.sequence_type == r[2]]
+                payments = [p for p in payments if p.sepa_mandate.type == r[2]
+                    and p.sepa_mandate.scheme == r[3]]
             found = True
             for payment in payments:
                 if payment.line and payment.line.reconciliation:
