@@ -68,7 +68,7 @@ class StatementLine:
                 order_by=payment.date.desc,
                 )
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         cursor.execute(*query)
         res = cursor.fetchall()
         domains = [[('group', '=', r[0]), ('date', '=', r[1])] for r in res]
