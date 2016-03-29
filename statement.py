@@ -7,13 +7,14 @@ from decimal import Decimal
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
-__metaclass__ = PoolMeta
+
 __all__ = ['StatementLine']
 
 _ZERO = Decimal('0.0')
 
 
 class StatementLine:
+    __metaclass__ = PoolMeta
     __name__ = 'account.bank.statement.line'
 
     def _search_payments(self, amount):
