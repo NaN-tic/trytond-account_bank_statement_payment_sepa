@@ -13,8 +13,7 @@ __all__ = ['StatementLine']
 _ZERO = Decimal('0.0')
 
 
-class StatementLine:
-    __metaclass__ = PoolMeta
+class StatementLine(metaclass=PoolMeta):
     __name__ = 'account.bank.statement.line'
 
     def _search_payments(self, amount):
